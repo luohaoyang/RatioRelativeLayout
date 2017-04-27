@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.example.meitu.layouttest.RatioRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ff0"
+        app:heightPiece="1334"
+        app:widthPiece="750">
+
+        <View
+            android:id="@+id/view_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            app:ratioHeight="100" />
+
+        <View
+            android:id="@+id/view_2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_below="@id/view_1"
+            android:layout_centerHorizontal="true"
+            android:background="@color/colorPrimary"
+            app:aspectRatio="0.75"
+            app:ratioHeight="700"
+            app:ratio_marginTop="50" />
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_below="@id/view_2"
+            android:layout_centerHorizontal="true"
+            android:background="@color/colorPrimary"
+            app:aspectRatio="3"
+            app:ratioHeight="150"
+            app:ratio_marginTop="150" />
+
+    </com.example.meitu.layouttest.RatioRelativeLayout>
+
+</RelativeLayout>
