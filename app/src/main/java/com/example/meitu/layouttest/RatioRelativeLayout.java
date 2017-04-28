@@ -29,7 +29,7 @@ import android.widget.RelativeLayout;
 public class RatioRelativeLayout extends RelativeLayout {
     public static final String TAG = "RatioRelativeLayout";
     /**
-     布局方向：无方向、水平、垂直
+     * 布局方向：无方向、水平、垂直
      */
     public static final int NO_ORIENTATION = -1;
     public static final int HORIZONTAL = 0;
@@ -48,7 +48,7 @@ public class RatioRelativeLayout extends RelativeLayout {
     private static final int[] RULES_HORIZONTAL = {LEFT_OF, RIGHT_OF, ALIGN_LEFT, ALIGN_RIGHT};
     // 所有依赖布局规则数组
     private static final int[] RULES_ALL_SORT = {ABOVE, BELOW, ALIGN_BASELINE, ALIGN_TOP, ALIGN_BOTTOM, LEFT_OF,
-        RIGHT_OF, ALIGN_LEFT, ALIGN_RIGHT};
+            RIGHT_OF, ALIGN_LEFT, ALIGN_RIGHT};
     // 布局padding
     private int mPaddingLeft = 0, mPaddingRight = 0, mPaddingTop = 0, mPaddingBottom = 0;
     // 是否需要重新计算view序列标志
@@ -58,7 +58,7 @@ public class RatioRelativeLayout extends RelativeLayout {
     // 规则依赖图，由于拓扑排序
     private final DependencyGraph mGraph = new DependencyGraph();
     // 长宽分块总数
-    public int mWidthPiece = 0, mHeightPiece = 0;
+    public float mWidthPiece = 0, mHeightPiece = 0;
     // 设置适配模式
     public int mAdaptType = FIT_XY;
 
@@ -70,8 +70,8 @@ public class RatioRelativeLayout extends RelativeLayout {
         super(context, attrs, defStyleAttr);
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RatioRelativeLayout);
-            mHeightPiece = a.getInt(R.styleable.RatioRelativeLayout_layout_heightSpec, 0);
-            mWidthPiece = a.getInt(R.styleable.RatioRelativeLayout_layout_widthSpec, 0);
+            mHeightPiece = a.getFloat(R.styleable.RatioRelativeLayout_layout_heightSpec, 0);
+            mWidthPiece = a.getFloat(R.styleable.RatioRelativeLayout_layout_widthSpec, 0);
             mAdaptType = a.getInt(R.styleable.RatioRelativeLayout_adaptType, FIT_XY);
             mPaddingLeft = getPaddingLeft();
             mPaddingRight = getPaddingRight();
@@ -116,6 +116,7 @@ public class RatioRelativeLayout extends RelativeLayout {
 
     /**
      * 核心方法，测量自身及所有child的大小、位置。
+     *
      * @param widthMeasureSpec
      * @param heightMeasureSpec
      */
@@ -220,8 +221,9 @@ public class RatioRelativeLayout extends RelativeLayout {
     }
 
     /**
-     *  将child设置的比例margin和size转换成在当前尺度下正式margin与size.
-     * @param width 当前layout真实的width。
+     * 将child设置的比例margin和size转换成在当前尺度下正式margin与size.
+     *
+     * @param width  当前layout真实的width。
      * @param height 当前layout真实的height。
      */
     private void resolveChildSizeAndMargin(int width, int height) {
@@ -236,7 +238,7 @@ public class RatioRelativeLayout extends RelativeLayout {
                 }
                 if (layoutParams.ratioMarginBottom != 0 && mHeightPiece != 0) {
                     layoutParams.bottomMargin =
-                        Math.round(layoutParams.ratioMarginBottom / (float) mHeightPiece * height);
+                            Math.round(layoutParams.ratioMarginBottom / (float) mHeightPiece * height);
                 }
                 if (layoutParams.ratioMarginLeft != 0 && mWidthPiece != 0) {
                     layoutParams.leftMargin = Math.round(layoutParams.ratioMarginLeft / (float) mWidthPiece * width);
@@ -277,6 +279,7 @@ public class RatioRelativeLayout extends RelativeLayout {
 
     /**
      * 测量child的size，每个view都会被测量两遍。
+     *
      * @param child
      * @param params
      * @param myWidth
@@ -285,13 +288,13 @@ public class RatioRelativeLayout extends RelativeLayout {
     private void measureChild(View child, LayoutParams params, int myWidth, int myHeight) {
         int childWidthMeasureSpec;
         childWidthMeasureSpec =
-            getChildMeasureSpec(params.mLeft, params.mRight, params.width, params.leftMargin, params.rightMargin,
-                mPaddingLeft, mPaddingRight, myWidth);
+                getChildMeasureSpec(params.mLeft, params.mRight, params.width, params.leftMargin, params.rightMargin,
+                        mPaddingLeft, mPaddingRight, myWidth);
 
         int childHeightMeasureSpec;
         childHeightMeasureSpec =
-            getChildMeasureSpec(params.mTop, params.mBottom, params.height, params.topMargin, params.bottomMargin,
-                mPaddingTop, mPaddingBottom, myHeight);
+                getChildMeasureSpec(params.mTop, params.mBottom, params.height, params.topMargin, params.bottomMargin,
+                        mPaddingTop, mPaddingBottom, myHeight);
 
         child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
     }
@@ -301,20 +304,20 @@ public class RatioRelativeLayout extends RelativeLayout {
      * This includes size constraints imposed by the RelativeLayout as well as
      * the View's desired dimension.
      *
-     * @param childStart The left or top field of the child's layout params
-     * @param childEnd The right or bottom field of the child's layout params
-     * @param childSize The child's desired size (the width or height field of
-     *        the child's layout params)
-     * @param startMargin The left or top margin
-     * @param endMargin The right or bottom margin
+     * @param childStart   The left or top field of the child's layout params
+     * @param childEnd     The right or bottom field of the child's layout params
+     * @param childSize    The child's desired size (the width or height field of
+     *                     the child's layout params)
+     * @param startMargin  The left or top margin
+     * @param endMargin    The right or bottom margin
      * @param startPadding mPaddingLeft or mPaddingTop
-     * @param endPadding mPaddingRight or mPaddingBottom
-     * @param mySize The width or height of this view (the RelativeLayout)
+     * @param endPadding   mPaddingRight or mPaddingBottom
+     * @param mySize       The width or height of this view (the RelativeLayout)
      * @return MeasureSpec for the child
      * 获取child的MeasureSpec，这个方法会根据child的限制（mTop、mBottom等）构造出合理的大小。
      */
     private int getChildMeasureSpec(int childStart, int childEnd, int childSize, int startMargin, int endMargin,
-        int startPadding, int endPadding, int mySize) {
+                                    int startPadding, int endPadding, int mySize) {
         int childSpecMode = MeasureSpec.UNSPECIFIED;
         int childSpecSize = MeasureSpec.UNSPECIFIED;
 
@@ -376,6 +379,7 @@ public class RatioRelativeLayout extends RelativeLayout {
 
     /**
      * 应用垂直方向上的规则
+     *
      * @param myHeight
      * @param myBaseline
      */
@@ -445,18 +449,18 @@ public class RatioRelativeLayout extends RelativeLayout {
                 return;
             } else if (childParams.mTop != VALUE_NOT_SET) {
                 height =
-                    Math.min(Math.round(child.getMeasuredWidth() / childParams.aspectRatio), myHeight
-                        - (childParams.mTop + childParams.bottomMargin + mPaddingBottom));
+                        Math.min(Math.round(child.getMeasuredWidth() / childParams.aspectRatio), myHeight
+                                - (childParams.mTop + childParams.bottomMargin + mPaddingBottom));
                 childParams.mBottom = childParams.mTop + height;
             } else if (childParams.mBottom != VALUE_NOT_SET) {
                 height =
-                    Math.min(Math.round(child.getMeasuredWidth() / childParams.aspectRatio), childParams.mBottom
-                        - (childParams.topMargin + mPaddingTop));
+                        Math.min(Math.round(child.getMeasuredWidth() / childParams.aspectRatio), childParams.mBottom
+                                - (childParams.topMargin + mPaddingTop));
                 childParams.mTop = childParams.mBottom - height;
             } else {
                 height =
-                    Math.min(Math.round(child.getMeasuredWidth() / childParams.aspectRatio), myHeight
-                        - (childParams.topMargin + mPaddingTop + childParams.bottomMargin + mPaddingBottom));
+                        Math.min(Math.round(child.getMeasuredWidth() / childParams.aspectRatio), myHeight
+                                - (childParams.topMargin + mPaddingTop + childParams.bottomMargin + mPaddingBottom));
                 childParams.height = height;
             }
         }
@@ -464,6 +468,7 @@ public class RatioRelativeLayout extends RelativeLayout {
 
     /**
      * 应用水平方向上的规则
+     *
      * @param myWidth
      * @param rules
      */
@@ -531,18 +536,18 @@ public class RatioRelativeLayout extends RelativeLayout {
                 return;
             } else if (childParams.mLeft != VALUE_NOT_SET) {
                 width =
-                    Math.min(Math.round(child.getMeasuredHeight() * childParams.aspectRatio), myWidth
-                        - (childParams.mLeft + childParams.rightMargin + mPaddingRight));
+                        Math.min(Math.round(child.getMeasuredHeight() * childParams.aspectRatio), myWidth
+                                - (childParams.mLeft + childParams.rightMargin + mPaddingRight));
                 childParams.mRight = childParams.mLeft + width;
             } else if (childParams.mRight != VALUE_NOT_SET) {
                 width =
-                    Math.min(Math.round(child.getMeasuredHeight() * childParams.aspectRatio), childParams.mRight
-                        - (childParams.leftMargin + mPaddingLeft));
+                        Math.min(Math.round(child.getMeasuredHeight() * childParams.aspectRatio), childParams.mRight
+                                - (childParams.leftMargin + mPaddingLeft));
                 childParams.mLeft = childParams.mRight - width;
             } else {
                 width =
-                    Math.min(Math.round(child.getMeasuredHeight() * childParams.aspectRatio), myWidth
-                        - (childParams.leftMargin + mPaddingLeft + childParams.rightMargin + mPaddingRight));
+                        Math.min(Math.round(child.getMeasuredHeight() * childParams.aspectRatio), myWidth
+                                - (childParams.leftMargin + mPaddingLeft + childParams.rightMargin + mPaddingRight));
                 childParams.width = width;
             }
         }
@@ -551,6 +556,7 @@ public class RatioRelativeLayout extends RelativeLayout {
 
     /**
      * 设置child的水平位置
+     *
      * @param child
      * @param params
      * @param myWidth
@@ -573,10 +579,16 @@ public class RatioRelativeLayout extends RelativeLayout {
                 params.mRight = params.mLeft + child.getMeasuredWidth();
             }
         }
+
+        //计算自身的ratioWidth
+        if (params.ratioWidth <= 0 && myWidth != 0) {
+            params.ratioWidth = child.getMeasuredWidth() / myWidth * mWidthPiece;
+        }
     }
 
     /**
      * 设置child的垂直位置
+     *
      * @param child
      * @param params
      * @param myHeight
@@ -599,11 +611,17 @@ public class RatioRelativeLayout extends RelativeLayout {
                 params.mBottom = params.mTop + child.getMeasuredHeight();
             }
         }
+
+        //计算自身的ratioWidth
+        if (params.ratioHeight <= 0 && myHeight != 0) {
+            params.ratioHeight = child.getMeasuredHeight() / myHeight * mHeightPiece;
+        }
     }
 
     /**
      * 获取一种规则下当前node的父节点的layoutParams
-     * @param rules 当前node的view的依赖数组，包含其依赖的view的id。
+     *
+     * @param rules    当前node的view的依赖数组，包含其依赖的view的id。
      * @param relation 规则
      * @return
      */
@@ -620,7 +638,8 @@ public class RatioRelativeLayout extends RelativeLayout {
 
     /**
      * 获取一种规则下当前node的父节点
-     * @param rules 当前node的view的依赖数组，包含其依赖的view的id。
+     *
+     * @param rules    当前node的view的依赖数组，包含其依赖的view的id。
      * @param relation 规则
      * @return
      */
@@ -659,7 +678,7 @@ public class RatioRelativeLayout extends RelativeLayout {
         // 比例size
         public float ratioWidth = -1, ratioHeight = -1;
         // 比例margin
-        public int ratioMarginLeft = 0, ratioMarginRight = 0, ratioMarginTop = 0, ratioMarginBottom = 0;
+        public float ratioMarginLeft = 0, ratioMarginRight = 0, ratioMarginTop = 0, ratioMarginBottom = 0;
 
         public LayoutParams(ViewGroup.LayoutParams layoutParams) {
             super(layoutParams);
@@ -672,12 +691,12 @@ public class RatioRelativeLayout extends RelativeLayout {
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
             TypedArray a = c.obtainStyledAttributes(attrs, R.styleable.RatioRelativeLayout_Layout);
-            ratioMarginLeft = a.getInt(R.styleable.RatioRelativeLayout_Layout_layout_ratioMarginLeft, 0);
-            ratioMarginRight = a.getInt(R.styleable.RatioRelativeLayout_Layout_layout_ratioMarginRight, 0);
-            ratioMarginTop = a.getInt(R.styleable.RatioRelativeLayout_Layout_layout_ratioMarginTop, 0);
-            ratioMarginBottom = a.getInt(R.styleable.RatioRelativeLayout_Layout_layout_ratioMarginBottom, 0);
-            ratioHeight = a.getInt(R.styleable.RatioRelativeLayout_Layout_layout_ratioHeight, -1);
-            ratioWidth = a.getInt(R.styleable.RatioRelativeLayout_Layout_layout_ratioWidth, -1);
+            ratioMarginLeft = a.getFloat(R.styleable.RatioRelativeLayout_Layout_layout_ratioMarginLeft, 0);
+            ratioMarginRight = a.getFloat(R.styleable.RatioRelativeLayout_Layout_layout_ratioMarginRight, 0);
+            ratioMarginTop = a.getFloat(R.styleable.RatioRelativeLayout_Layout_layout_ratioMarginTop, 0);
+            ratioMarginBottom = a.getFloat(R.styleable.RatioRelativeLayout_Layout_layout_ratioMarginBottom, 0);
+            ratioHeight = a.getFloat(R.styleable.RatioRelativeLayout_Layout_layout_ratioHeight, -1);
+            ratioWidth = a.getFloat(R.styleable.RatioRelativeLayout_Layout_layout_ratioWidth, -1);
 
             String ratioString = a.getString(R.styleable.RatioRelativeLayout_Layout_aspectRatio);
             aspectRatio = TextUtils.isEmpty(ratioString) ? 0 : getAspectRatioByString(ratioString);
@@ -719,6 +738,7 @@ public class RatioRelativeLayout extends RelativeLayout {
 
         /**
          * layoutParams中是否有指定的高度
+         *
          * @return
          */
         public boolean hasCertainHeight() {
@@ -727,6 +747,7 @@ public class RatioRelativeLayout extends RelativeLayout {
 
         /**
          * layoutParams中是否有指定的宽度
+         *
          * @return
          */
         public boolean hasCertainWidth() {
@@ -735,6 +756,7 @@ public class RatioRelativeLayout extends RelativeLayout {
 
         /**
          * 获取规则适用的方向
+         *
          * @return
          */
         public static int getRuleOrientation(int rule) {
@@ -797,8 +819,9 @@ public class RatioRelativeLayout extends RelativeLayout {
 
         /**
          * Adds a view to the graph.
+         *
          * @param view The view to be added as a node to the graph.
-         * 添加view到graph中，每个view应该包含两个方向的node。
+         *             添加view到graph中，每个view应该包含两个方向的node。
          */
         void add(View view) {
             final int id = view.getId();
@@ -827,9 +850,9 @@ public class RatioRelativeLayout extends RelativeLayout {
          * is: B -> A -> C. The sorted array will contain views B, A and C in this order.
          *
          * @param sorted The sorted list of views. The length of this array must
-         *        be equal to getChildCount().
-         * @param rules The list of rules to take into account.
-         * 获取子节点的拓扑排序，通过sorted返回结果
+         *               be equal to getChildCount().
+         * @param rules  The list of rules to take into account.
+         *               获取子节点的拓扑排序，通过sorted返回结果
          */
         void getSortedNodes(Node[] sorted, int... rules) {
             // 获取所有没有父节点的节点
@@ -865,10 +888,11 @@ public class RatioRelativeLayout extends RelativeLayout {
         /**
          * Finds the roots of the graph. A root is a node with no dependency and
          * with [0..n] dependents.
-         * @param rulesFilter The list of rules to consider when building the
-         *        dependencies
-         * @return A list of node, each being a root of the graph
          *
+         * @param rulesFilter The list of rules to consider when building the
+         *                    dependencies
+         * @return A list of node, each being a root of the graph
+         * <p>
          * 查找所有没有父节点的root节点，此函数也同时会改变所有node的父节点与子节点
          * rulesFilter代表表示父子关系的规则，如水平方向的拓扑排序规则有：LeftOf、RightOf等。
          */
@@ -954,7 +978,7 @@ public class RatioRelativeLayout extends RelativeLayout {
         /**
          * A node in the dependency graph. A node is a view, its list of dependencies
          * and its list of dependents.
-         *
+         * <p>
          * A node with no dependent is considered a root of the graph.
          */
         static class Node {

@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#987"
     app:adaptType="fitX"
-    app:layout_heightSpec="11"
-    app:layout_widthSpec="750"
-    >
+    app:layout_heightSpec="1334"
+    app:layout_widthSpec="750">
 
     <ImageView
         android:id="@+id/iv_image"
@@ -14,9 +14,10 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:background="#fdf"
-        android:scaleType="centerCrop"
+        android:src="@drawable/go_airbrush_popup_window_bg"
         app:layout_ratioHeight="860"
         app:layout_ratioWidth="590"/>
+
 
     <Button
         android:id="@+id/iv_ok"
@@ -24,22 +25,23 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/iv_image"
         android:layout_centerHorizontal="true"
+        android:background="@drawable/go_airbrush_btn_bg_normal"
         android:gravity="center"
         android:text="Try it now"
+        android:textColor="#fff"
         app:layout_ratioHeight="80"
         app:layout_ratioMarginBottom="30"
         app:layout_ratioWidth="360"/>
 
     <TextView
         android:id="@+id/tv_title"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/iv_image"
+        android:layout_centerHorizontal="true"
         android:gravity="center"
         android:includeFontPadding="false"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:text="asdsadasdas"
+        android:text="MMMMMMMMMMM"
         android:textColor="#ff813c"
         android:textSize="14dp"
         app:layout_ratioHeight="60"

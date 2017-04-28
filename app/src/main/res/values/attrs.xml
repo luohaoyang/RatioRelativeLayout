@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="RatioRelativeLayout">
-        <attr name="layout_widthSpec" format="integer"/>
-        <attr name="layout_heightSpec" format="integer"/>
+        <attr name="layout_widthSpec" format="float"/>
+        <attr name="layout_heightSpec" format="float"/>
         <attr name="adaptType">
             <enum name="fitXY" value="0"/>
             <enum name="fitX" value="1"/>
@@ -12,12 +12,12 @@
 
     <declare-styleable name="RatioRelativeLayout_Layout">
         <attr name="aspectRatio" format="string"/>
-        <attr name="layout_ratioWidth" format="integer"/>
-        <attr name="layout_ratioHeight" format="integer"/>
-        <attr name="layout_ratioMarginLeft" format="integer"/>
-        <attr name="layout_ratioMarginRight" format="integer"/>
-        <attr name="layout_ratioMarginTop" format="integer"/>
-        <attr name="layout_ratioMarginBottom" format="integer"/>
+        <attr name="layout_ratioWidth" format="float"/>
+        <attr name="layout_ratioHeight" format="float"/>
+        <attr name="layout_ratioMarginLeft" format="float"/>
+        <attr name="layout_ratioMarginRight" format="float"/>
+        <attr name="layout_ratioMarginTop" format="float"/>
+        <attr name="layout_ratioMarginBottom" format="float"/>
     </declare-styleable>
 
 
