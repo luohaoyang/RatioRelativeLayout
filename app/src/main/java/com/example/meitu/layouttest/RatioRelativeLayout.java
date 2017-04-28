@@ -70,8 +70,8 @@ public class RatioRelativeLayout extends RelativeLayout {
         super(context, attrs, defStyleAttr);
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RatioRelativeLayout);
-            mHeightPiece = a.getInt(R.styleable.RatioRelativeLayout_heightSpec, 0);
-            mWidthPiece = a.getInt(R.styleable.RatioRelativeLayout_widthSpec, 0);
+            mHeightPiece = a.getInt(R.styleable.RatioRelativeLayout_layout_heightSpec, 0);
+            mWidthPiece = a.getInt(R.styleable.RatioRelativeLayout_layout_widthSpec, 0);
             mAdaptType = a.getInt(R.styleable.RatioRelativeLayout_adaptType, FIT_XY);
             mPaddingLeft = getPaddingLeft();
             mPaddingRight = getPaddingRight();

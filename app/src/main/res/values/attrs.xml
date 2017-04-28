@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="RatioRelativeLayout">
-        <attr name="widthSpec" format="integer"/>
-        <attr name="heightSpec" format="integer"/>
+        <attr name="layout_widthSpec" format="integer"/>
+        <attr name="layout_heightSpec" format="integer"/>
         <attr name="adaptType">
             <enum name="fitXY" value="0"/>
             <enum name="fitX" value="1"/>

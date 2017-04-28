@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:adaptType="fitX"
-    app:heightSpec="11"
-    app:widthSpec="750"
+    app:layout_heightSpec="11"
+    app:layout_widthSpec="750"
     >
 
     <ImageView
