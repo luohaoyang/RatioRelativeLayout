@@ -3,8 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:heightPiece="1334"
-    app:widthPiece="750"
+    app:adaptType="fitX"
+    app:heightSpec="11"
+    app:widthSpec="750"
     >
 
     <ImageView
@@ -14,47 +15,35 @@
         android:layout_centerInParent="true"
         android:background="#fdf"
         android:scaleType="centerCrop"
-        app:aspectRatio="0.686"
-        app:ratioWidth="590"/>
+        app:layout_ratioHeight="860"
+        app:layout_ratioWidth="590"/>
 
-
-    <com.example.meitu.layouttest.RatioRelativeLayout
+    <Button
+        android:id="@+id/iv_ok"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/iv_image"
         android:layout_centerHorizontal="true"
-        android:background="#f00"
-        app:aspectRatio="2.95"
-        app:heightPiece="200"
-        app:ratioWidth="590">
+        android:gravity="center"
+        android:text="Try it now"
+        app:layout_ratioHeight="80"
+        app:layout_ratioMarginBottom="30"
+        app:layout_ratioWidth="360"/>
 
-        <Button
-            android:id="@+id/iv_ok"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:gravity="center"
-            android:text="Try it now"
-            app:ratioHeight="80"
-            app:ratioWidth="360"
-            app:ratio_marginBottom="30"/>
-
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:includeFontPadding="false"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="asdsadasdas"
-            android:textColor="#ff813c"
-            android:textSize="14dp"
-            app:ratioHeight="60"
-            app:ratio_marginTop="20"/>
-
-    </com.example.meitu.layouttest.RatioRelativeLayout>
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/iv_image"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="asdsadasdas"
+        android:textColor="#ff813c"
+        android:textSize="14dp"
+        app:layout_ratioHeight="60"
+        app:layout_ratioMarginTop="680"/>
 
 
 </com.example.meitu.layouttest.RatioRelativeLayout>

@@ -3,7 +3,9 @@ package com.example.meitu.layouttest;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.IllegalFormatFlagsException;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -32,6 +34,12 @@ public class RatioRelativeLayout extends RelativeLayout {
     public static final int NO_ORIENTATION = -1;
     public static final int HORIZONTAL = 0;
     public static final int VERTICAL = 1;
+    /**
+     * 适配模式
+     */
+    public static final int FIT_XY = 0;
+    public static final int FIT_X = 1;
+    public static final int FIT_Y = 2;
     // 代表数值未设置
     private static int VALUE_NOT_SET = Integer.MIN_VALUE;
     // 垂直布局规则数组
@@ -51,6 +59,8 @@ public class RatioRelativeLayout extends RelativeLayout {
     private final DependencyGraph mGraph = new DependencyGraph();
     // 长宽分块总数
     public int mWidthPiece = 0, mHeightPiece = 0;
+    // 设置适配模式
+    public int mAdaptType = FIT_XY;
 
     public RatioRelativeLayout(Context context) {
         super(context);
@@ -60,8 +70,9 @@ public class RatioRelativeLayout extends RelativeLayout {
         super(context, attrs, defStyleAttr);
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.RatioRelativeLayout);
-            mHeightPiece = a.getInt(R.styleable.RatioRelativeLayout_heightPiece, 0);
-            mWidthPiece = a.getInt(R.styleable.RatioRelativeLayout_widthPiece, 0);
+            mHeightPiece = a.getInt(R.styleable.RatioRelativeLayout_heightSpec, 0);
+            mWidthPiece = a.getInt(R.styleable.RatioRelativeLayout_widthSpec, 0);
+            mAdaptType = a.getInt(R.styleable.RatioRelativeLayout_adaptType, FIT_XY);
             mPaddingLeft = getPaddingLeft();
             mPaddingRight = getPaddingRight();
             mPaddingBottom = getPaddingBottom();
@@ -117,26 +128,14 @@ public class RatioRelativeLayout extends RelativeLayout {
             sortChildren();
             // printSortChildren();
         }
+
         ViewGroup.LayoutParams layoutParams = getLayoutParams();
-        // 如果其父类也是RatioRelativeLayout，则查看是否需要基础ratioHeight，ratioWidth作为heightSpec和widthSpec。
-        if (layoutParams instanceof LayoutParams && (mHeightPiece <= 0 || mWidthPiece <= 0)) {
-
-            mHeightPiece = mHeightPiece <= 0 ? (int) ((LayoutParams) layoutParams).ratioHeight : mHeightPiece;
-            mWidthPiece = mWidthPiece <= 0 ? (int) ((LayoutParams) layoutParams).ratioWidth : mWidthPiece;
-
-            float aspectRatio = ((LayoutParams) layoutParams).aspectRatio;
-            if (aspectRatio != 0) {
-                if (mWidthPiece <= 0 && mHeightPiece > 0) {
-                    mWidthPiece = Math.round(mHeightPiece * aspectRatio);
-                } else if (mHeightPiece <= 0 && mWidthPiece > 0) {
-                    mHeightPiece = Math.round(mWidthPiece / aspectRatio);
-                }
-            }
-        }
 
         // 获取当前RatioRelativeLayout的大小，此布局下会屏蔽WRAP_CONTENT，使得RatioRelativeLayout本身有个固定的大小，这样才能对child进行比例布局。
         int width = layoutParams.width > 0 ? layoutParams.width : MeasureSpec.getSize(widthMeasureSpec);
         int height = layoutParams.height > 0 ? layoutParams.height : MeasureSpec.getSize(heightMeasureSpec);
+
+        resolveTotalPiece(width, height);
 
         // 将child设置的比例margin和size转换成在当前尺度下正式margin与size，
         // 如果只是需要比例布局，而不涉及其他规则，则完全可以复写onMeasure方法，并在调用super.onMeasure方法前加入这一次逻辑即可。
@@ -170,6 +169,39 @@ public class RatioRelativeLayout extends RelativeLayout {
         }
         // 设置自身大小
         setMeasuredDimension(width, height);
+    }
+
+    /**
+     * 处理 widthPiece 与 heightPiece。
+     */
+    private void resolveTotalPiece(int width, int height) {
+        ViewGroup.LayoutParams layoutParams = getLayoutParams();
+        // 如果其父类也是RatioRelativeLayout，则查看是否需要基础ratioHeight，ratioWidth作为heightSpec和widthSpec。
+        if (layoutParams instanceof LayoutParams && (mHeightPiece <= 0 || mWidthPiece <= 0)) {
+
+            mHeightPiece = mHeightPiece <= 0 ? (int) ((LayoutParams) layoutParams).ratioHeight : mHeightPiece;
+            mWidthPiece = mWidthPiece <= 0 ? (int) ((LayoutParams) layoutParams).ratioWidth : mWidthPiece;
+
+            float aspectRatio = ((LayoutParams) layoutParams).aspectRatio;
+            if (aspectRatio != 0) {
+                if (mWidthPiece <= 0 && mHeightPiece > 0) {
+                    mWidthPiece = Math.round(mHeightPiece * aspectRatio);
+                } else if (mHeightPiece <= 0 && mWidthPiece > 0) {
+                    mHeightPiece = Math.round(mWidthPiece / aspectRatio);
+                }
+            }
+        }
+        // 根据适配模式重新计算piece。
+        if (mAdaptType == FIT_X && mWidthPiece > 0) {
+            mHeightPiece = Math.round(mWidthPiece * height / (float) width);
+        }
+        if (mAdaptType == FIT_Y && mHeightPiece > 0) {
+            mWidthPiece = Math.round(mHeightPiece * width / (float) height);
+        }
+
+        if (mWidthPiece <= 0 || mHeightPiece <= 0) {
+            throw new IllegalArgumentException("widthSpec or heightSpec are not defined.");
+        }
     }
 
     /**
@@ -640,22 +672,49 @@ public class RatioRelativeLayout extends RelativeLayout {
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
             TypedArray a = c.obtainStyledAttributes(attrs, R.styleable.RatioRelativeLayout_Layout);
-            ratioMarginLeft = a.getInt(R.styleable.RatioRelativeLayout_Layout_ratio_marginLeft, 0);
-            ratioMarginRight = a.getInt(R.styleable.RatioRelativeLayout_Layout_ratio_marginRight, 0);
-            ratioMarginTop = a.getInt(R.styleable.RatioRelativeLayout_Layout_ratio_marginTop, 0);
-            ratioMarginBottom = a.getInt(R.styleable.RatioRelativeLayout_Layout_ratio_marginBottom, 0);
-            ratioHeight = a.getInt(R.styleable.RatioRelativeLayout_Layout_ratioHeight, -1);
-            ratioWidth = a.getInt(R.styleable.RatioRelativeLayout_Layout_ratioWidth, -1);
+            ratioMarginLeft = a.getInt(R.styleable.RatioRelativeLayout_Layout_layout_ratioMarginLeft, 0);
+            ratioMarginRight = a.getInt(R.styleable.RatioRelativeLayout_Layout_layout_ratioMarginRight, 0);
+            ratioMarginTop = a.getInt(R.styleable.RatioRelativeLayout_Layout_layout_ratioMarginTop, 0);
+            ratioMarginBottom = a.getInt(R.styleable.RatioRelativeLayout_Layout_layout_ratioMarginBottom, 0);
+            ratioHeight = a.getInt(R.styleable.RatioRelativeLayout_Layout_layout_ratioHeight, -1);
+            ratioWidth = a.getInt(R.styleable.RatioRelativeLayout_Layout_layout_ratioWidth, -1);
 
             String ratioString = a.getString(R.styleable.RatioRelativeLayout_Layout_aspectRatio);
-            aspectRatio = getAspectRatioByString(ratioString);
+            aspectRatio = TextUtils.isEmpty(ratioString) ? 0 : getAspectRatioByString(ratioString);
             a.recycle();
         }
 
         private float getAspectRatioByString(String string) {
-            if(TextUtils.isEmpty(string)||()){
-                
+            if (TextUtils.isEmpty(string) || !(isNumber(string) ^ string.contains("/"))) {
+                throw new IllegalStateException("aspectRatio:" + string + " is illegal.");
             }
+            if (isNumber(string)) {
+                return Float.parseFloat(string);
+            } else {
+                int index = string.indexOf("/");
+                if (index < 0 || index >= string.length()) {
+                    throw new IllegalStateException("aspectRatio:" + string + " is illegal.");
+                }
+                String dividend = string.substring(0, index);
+                String divisor = string.substring(index + 1, string.length());
+                if (!isNumber(dividend) || !isNumber(divisor)) {
+                    throw new IllegalStateException("aspectRatio:" + string + " is illegal.");
+                }
+                float a = Float.parseFloat(dividend);
+                float b = Float.parseFloat(divisor);
+                if (b == 0) {
+                    throw new IllegalStateException("aspectRatio: divisor can't be 0");
+                }
+                return a / b;
+            }
+        }
+
+        public static boolean isNumber(String str) {
+            if (TextUtils.isEmpty(str)) {
+                return false;
+            }
+            Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*[.]?[\\d]*$");
+            return pattern.matcher(str).matches();
         }
 
         /**

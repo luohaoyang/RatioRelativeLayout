@@ -1,32 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="RatioLayout">
-        <attr name="heightSum" format="integer" />
-        <attr name="widthSum" format="integer" />
-    </declare-styleable>
-
-    <declare-styleable name="RatioLayout_Layout">
-        <attr name="aspect_ratio" format="float" />
-        <attr name="android:layout_gravity" />
-        <attr name="x_start" format="integer" />
-        <attr name="x_end" format="integer" />
-        <attr name="y_start" format="integer" />
-        <attr name="y_end" format="integer" />
-    </declare-styleable>
-
     <declare-styleable name="RatioRelativeLayout">
-    <attr name="widthPiece" format="integer" />
-    <attr name="heightPiece" format="integer" />
-</declare-styleable>
+        <attr name="widthSpec" format="integer"/>
+        <attr name="heightSpec" format="integer"/>
+        <attr name="adaptType">
+            <enum name="fitXY" value="0"/>
+            <enum name="fitX" value="1"/>
+            <enum name="fitY" value="2"/>
+        </attr>
+    </declare-styleable>
 
     <declare-styleable name="RatioRelativeLayout_Layout">
-        <attr name="aspectRatio" format="string" />
-        <attr name="ratioWidth" format="integer" />
-        <attr name="ratioHeight" format="integer" />
-        <attr name="ratio_marginLeft" format="integer" />
-        <attr name="ratio_marginRight" format="integer" />
-        <attr name="ratio_marginTop" format="integer" />
-        <attr name="ratio_marginBottom" format="integer" />
+        <attr name="aspectRatio" format="string"/>
+        <attr name="layout_ratioWidth" format="integer"/>
+        <attr name="layout_ratioHeight" format="integer"/>
+        <attr name="layout_ratioMarginLeft" format="integer"/>
+        <attr name="layout_ratioMarginRight" format="integer"/>
+        <attr name="layout_ratioMarginTop" format="integer"/>
+        <attr name="layout_ratioMarginBottom" format="integer"/>
     </declare-styleable>
 
 
