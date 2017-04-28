@@ -582,7 +582,7 @@ public class RatioRelativeLayout extends RelativeLayout {
 
         //计算自身的ratioWidth
         if (params.ratioWidth <= 0 && myWidth != 0) {
-            params.ratioWidth = child.getMeasuredWidth() / myWidth * mWidthPiece;
+            params.ratioWidth = child.getMeasuredWidth() / (float)myWidth * mWidthPiece;
         }
     }
 
