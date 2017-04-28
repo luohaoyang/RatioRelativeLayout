@@ -15,7 +15,7 @@
 
 - 如果RatioRelativeLayout之间有直接的嵌套关系，则内层的layout_widthSpec 与 layout_heightSpec在不指定的情况下会继承自计算后的layout_ratioWidth与layout_ratioHeight，但大多数情况下用不到多层嵌套。
 
-  ​
+  
 
 ## 布局属性
 
@@ -43,7 +43,9 @@
 
 ## 使用案例
 
+#### 下面三张图分别为UI标注、1920x1080显示、800x480显示：
 
+<img src="https://github.com/luohaoyang/RatioRelativeLayout/blob/master/%E6%A0%87%E6%B3%A8_spec.png" height="500"> <img src="https://github.com/luohaoyang/RatioRelativeLayout/blob/master/1920x1080.png" height="500"> <img src="https://github.com/luohaoyang/RatioRelativeLayout/blob/master/800x480.png" height="500">
 
 ```
 <com.example.meitu.layouttest.RatioRelativeLayout
