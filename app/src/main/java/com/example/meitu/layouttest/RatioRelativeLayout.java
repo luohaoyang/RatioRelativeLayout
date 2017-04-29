@@ -581,9 +581,9 @@ public class RatioRelativeLayout extends RelativeLayout {
         }
 
         //计算自身的ratioWidth
-        if (params.ratioWidth <= 0 && myWidth != 0) {
-            params.ratioWidth = child.getMeasuredWidth() / (float)myWidth * mWidthPiece;
-        }
+//        if (params.ratioWidth <= 0 && myWidth != 0) {
+//            params.ratioWidth = child.getMeasuredWidth() / (float)myWidth * mWidthPiece;
+//        }
     }
 
     /**
@@ -613,9 +613,9 @@ public class RatioRelativeLayout extends RelativeLayout {
         }
 
         //计算自身的ratioWidth
-        if (params.ratioHeight <= 0 && myHeight != 0) {
-            params.ratioHeight = child.getMeasuredHeight() / myHeight * mHeightPiece;
-        }
+        // if (params.ratioHeight <= 0 && myHeight != 0) {
+        // params.ratioHeight = child.getMeasuredHeight() / myHeight * mHeightPiece;
+        // }
     }
 
     /**
