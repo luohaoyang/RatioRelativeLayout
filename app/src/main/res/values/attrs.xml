@@ -3,6 +3,7 @@
     <declare-styleable name="RatioRelativeLayout">
         <attr name="layout_widthSpec" format="float"/>
         <attr name="layout_heightSpec" format="float"/>
+        <attr name="android:clipChildren"/>
         <attr name="adaptType">
             <enum name="fitXY" value="0"/>
             <enum name="fitX" value="1"/>

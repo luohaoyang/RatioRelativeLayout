@@ -48,7 +48,7 @@ public class RatioRelativeLayout extends RelativeLayout {
     private static final int[] RULES_HORIZONTAL = {LEFT_OF, RIGHT_OF, ALIGN_LEFT, ALIGN_RIGHT};
     // 所有依赖布局规则数组
     private static final int[] RULES_ALL_SORT = {ABOVE, BELOW, ALIGN_BASELINE, ALIGN_TOP, ALIGN_BOTTOM, LEFT_OF,
-            RIGHT_OF, ALIGN_LEFT, ALIGN_RIGHT};
+        RIGHT_OF, ALIGN_LEFT, ALIGN_RIGHT};
     // 布局padding
     private int mPaddingLeft = 0, mPaddingRight = 0, mPaddingTop = 0, mPaddingBottom = 0;
     // 是否需要重新计算view序列标志
@@ -62,6 +62,8 @@ public class RatioRelativeLayout extends RelativeLayout {
     // 设置适配模式
     public int mAdaptType = FIT_XY;
 
+    public boolean mClipChildren = true;
+
     public RatioRelativeLayout(Context context) {
         super(context);
     }
@@ -73,6 +75,7 @@ public class RatioRelativeLayout extends RelativeLayout {
             mHeightPiece = a.getFloat(R.styleable.RatioRelativeLayout_layout_heightSpec, 0);
             mWidthPiece = a.getFloat(R.styleable.RatioRelativeLayout_layout_widthSpec, 0);
             mAdaptType = a.getInt(R.styleable.RatioRelativeLayout_adaptType, FIT_XY);
+            mClipChildren = a.getBoolean(R.styleable.RatioRelativeLayout_android_clipChildren, true);
             mPaddingLeft = getPaddingLeft();
             mPaddingRight = getPaddingRight();
             mPaddingBottom = getPaddingBottom();
@@ -238,7 +241,7 @@ public class RatioRelativeLayout extends RelativeLayout {
                 }
                 if (layoutParams.ratioMarginBottom != 0 && mHeightPiece != 0) {
                     layoutParams.bottomMargin =
-                            Math.round(layoutParams.ratioMarginBottom / (float) mHeightPiece * height);
+                        Math.round(layoutParams.ratioMarginBottom / (float) mHeightPiece * height);
                 }
                 if (layoutParams.ratioMarginLeft != 0 && mWidthPiece != 0) {
                     layoutParams.leftMargin = Math.round(layoutParams.ratioMarginLeft / (float) mWidthPiece * width);
@@ -288,13 +291,13 @@ public class RatioRelativeLayout extends RelativeLayout {
     private void measureChild(View child, LayoutParams params, int myWidth, int myHeight) {
         int childWidthMeasureSpec;
         childWidthMeasureSpec =
-                getChildMeasureSpec(params.mLeft, params.mRight, params.width, params.leftMargin, params.rightMargin,
-                        mPaddingLeft, mPaddingRight, myWidth);
+            getChildMeasureSpec(params.mLeft, params.mRight, params.width, params.leftMargin, params.rightMargin,
+                mPaddingLeft, mPaddingRight, myWidth);
 
         int childHeightMeasureSpec;
         childHeightMeasureSpec =
-                getChildMeasureSpec(params.mTop, params.mBottom, params.height, params.topMargin, params.bottomMargin,
-                        mPaddingTop, mPaddingBottom, myHeight);
+            getChildMeasureSpec(params.mTop, params.mBottom, params.height, params.topMargin, params.bottomMargin,
+                mPaddingTop, mPaddingBottom, myHeight);
 
         child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
     }
@@ -317,7 +320,7 @@ public class RatioRelativeLayout extends RelativeLayout {
      * 获取child的MeasureSpec，这个方法会根据child的限制（mTop、mBottom等）构造出合理的大小。
      */
     private int getChildMeasureSpec(int childStart, int childEnd, int childSize, int startMargin, int endMargin,
-                                    int startPadding, int endPadding, int mySize) {
+        int startPadding, int endPadding, int mySize) {
         int childSpecMode = MeasureSpec.UNSPECIFIED;
         int childSpecSize = MeasureSpec.UNSPECIFIED;
 
@@ -345,8 +348,8 @@ public class RatioRelativeLayout extends RelativeLayout {
             if (childSize >= 0) {
                 // Child wanted an exact size. Give as much as possible.
                 childSpecMode = MeasureSpec.EXACTLY;
-
-                if (maxAvailable >= 0) {
+                // 在父布局设置了ClipChildren为false的情况下不应限制子布局的位置
+                if (maxAvailable >= 0 && mClipChildren) {
                     // We have a maximum size in this dimension.
                     childSpecSize = Math.min(maxAvailable, childSize);
                 } else {
@@ -361,7 +364,8 @@ public class RatioRelativeLayout extends RelativeLayout {
             } else if (childSize == LayoutParams.WRAP_CONTENT) {
                 // Child wants to wrap content. Use AT_MOST to communicate
                 // available space if we know our max size.
-                if (maxAvailable >= 0) {
+                // 在父布局设置了ClipChildren为false情况下不应限制子布局的位置
+                if (maxAvailable >= 0 && mClipChildren) {
                     // We have a maximum size in this dimension.
                     childSpecMode = MeasureSpec.AT_MOST;
                     childSpecSize = maxAvailable;
@@ -449,18 +453,18 @@ public class RatioRelativeLayout extends RelativeLayout {
                 return;
             } else if (childParams.mTop != VALUE_NOT_SET) {
                 height =
-                        Math.min(Math.round(child.getMeasuredWidth() / childParams.aspectRatio), myHeight
-                                - (childParams.mTop + childParams.bottomMargin + mPaddingBottom));
+                    Math.min(Math.round(child.getMeasuredWidth() / childParams.aspectRatio), myHeight
+                        - (childParams.mTop + childParams.bottomMargin + mPaddingBottom));
                 childParams.mBottom = childParams.mTop + height;
             } else if (childParams.mBottom != VALUE_NOT_SET) {
                 height =
-                        Math.min(Math.round(child.getMeasuredWidth() / childParams.aspectRatio), childParams.mBottom
-                                - (childParams.topMargin + mPaddingTop));
+                    Math.min(Math.round(child.getMeasuredWidth() / childParams.aspectRatio), childParams.mBottom
+                        - (childParams.topMargin + mPaddingTop));
                 childParams.mTop = childParams.mBottom - height;
             } else {
                 height =
-                        Math.min(Math.round(child.getMeasuredWidth() / childParams.aspectRatio), myHeight
-                                - (childParams.topMargin + mPaddingTop + childParams.bottomMargin + mPaddingBottom));
+                    Math.min(Math.round(child.getMeasuredWidth() / childParams.aspectRatio), myHeight
+                        - (childParams.topMargin + mPaddingTop + childParams.bottomMargin + mPaddingBottom));
                 childParams.height = height;
             }
         }
@@ -536,18 +540,18 @@ public class RatioRelativeLayout extends RelativeLayout {
                 return;
             } else if (childParams.mLeft != VALUE_NOT_SET) {
                 width =
-                        Math.min(Math.round(child.getMeasuredHeight() * childParams.aspectRatio), myWidth
-                                - (childParams.mLeft + childParams.rightMargin + mPaddingRight));
+                    Math.min(Math.round(child.getMeasuredHeight() * childParams.aspectRatio), myWidth
+                        - (childParams.mLeft + childParams.rightMargin + mPaddingRight));
                 childParams.mRight = childParams.mLeft + width;
             } else if (childParams.mRight != VALUE_NOT_SET) {
                 width =
-                        Math.min(Math.round(child.getMeasuredHeight() * childParams.aspectRatio), childParams.mRight
-                                - (childParams.leftMargin + mPaddingLeft));
+                    Math.min(Math.round(child.getMeasuredHeight() * childParams.aspectRatio), childParams.mRight
+                        - (childParams.leftMargin + mPaddingLeft));
                 childParams.mLeft = childParams.mRight - width;
             } else {
                 width =
-                        Math.min(Math.round(child.getMeasuredHeight() * childParams.aspectRatio), myWidth
-                                - (childParams.leftMargin + mPaddingLeft + childParams.rightMargin + mPaddingRight));
+                    Math.min(Math.round(child.getMeasuredHeight() * childParams.aspectRatio), myWidth
+                        - (childParams.leftMargin + mPaddingLeft + childParams.rightMargin + mPaddingRight));
                 childParams.width = width;
             }
         }
@@ -580,10 +584,10 @@ public class RatioRelativeLayout extends RelativeLayout {
             }
         }
 
-        //计算自身的ratioWidth
-//        if (params.ratioWidth <= 0 && myWidth != 0) {
-//            params.ratioWidth = child.getMeasuredWidth() / (float)myWidth * mWidthPiece;
-//        }
+        // 计算自身的ratioWidth
+        // if (params.ratioWidth <= 0 && myWidth != 0) {
+        // params.ratioWidth = child.getMeasuredWidth() / (float)myWidth * mWidthPiece;
+        // }
     }
 
     /**
@@ -612,7 +616,7 @@ public class RatioRelativeLayout extends RelativeLayout {
             }
         }
 
-        //计算自身的ratioWidth
+        // 计算自身的ratioWidth
         // if (params.ratioHeight <= 0 && myHeight != 0) {
         // params.ratioHeight = child.getMeasuredHeight() / myHeight * mHeightPiece;
         // }

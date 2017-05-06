@@ -1,0 +1,26 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#987"
+    android:clipChildren="false">
+
+    <com.example.meitu.layouttest.RatioRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:background="@color/colorAccent"
+        android:clipChildren="false"
+        app:adaptType="fitX"
+        app:layout_heightSpec="1334"
+        app:layout_widthSpec="750">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="350dp"
+            android:background="#fff"/>
+    </com.example.meitu.layouttest.RatioRelativeLayout>
+
+
+</RelativeLayout>
