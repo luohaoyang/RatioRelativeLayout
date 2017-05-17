@@ -567,27 +567,27 @@ public class RatioRelativeLayout extends RelativeLayout {
      */
     private void positionChildHorizontal(View child, LayoutParams params, int myWidth) {
         // 根据条件设置真实的right与left
-        if (params.mRight != VALUE_NOT_SET && params.mLeft != VALUE_NOT_SET) {
-            return;
-        } else if (params.mRight == VALUE_NOT_SET && params.mLeft != VALUE_NOT_SET) {
+        int[] rules = params.getRules();
+        if (params.mRight == VALUE_NOT_SET && params.mLeft != VALUE_NOT_SET) {
             params.mRight = params.mLeft + child.getMeasuredWidth();
         } else if (params.mLeft == VALUE_NOT_SET && params.mRight != VALUE_NOT_SET) {
             params.mLeft = params.mRight - child.getMeasuredWidth();
         } else {
-            int[] rules = params.getRules();
             if (rules[CENTER_HORIZONTAL] != 0 || rules[CENTER_IN_PARENT] != 0) {
-                params.mLeft = Math.round(myWidth / 2f - child.getMeasuredWidth() / 2f);
-                params.mRight = Math.round(myWidth / 2f + child.getMeasuredWidth() / 2f);
+                myWidth -= params.leftMargin + params.rightMargin;
+                params.mLeft = Math.round(myWidth / 2f - child.getMeasuredWidth() / 2f) + params.leftMargin;
+                params.mRight = Math.round(myWidth / 2f + child.getMeasuredWidth() / 2f) + params.leftMargin;
             } else {
                 params.mLeft = params.leftMargin + mPaddingLeft;
                 params.mRight = params.mLeft + child.getMeasuredWidth();
             }
         }
 
-        // 计算自身的ratioWidth
-        // if (params.ratioWidth <= 0 && myWidth != 0) {
-        // params.ratioWidth = child.getMeasuredWidth() / (float)myWidth * mWidthPiece;
-        // }
+        int gap = params.mBottom - params.mTop - child.getMeasuredHeight();
+        if (gap > 0 && (rules[CENTER_HORIZONTAL] != 0 || rules[CENTER_IN_PARENT] != 0)) {
+            params.mLeft += gap / 2;
+            params.mRight -= gap / 2;
+        }
     }
 
     /**
@@ -599,27 +599,27 @@ public class RatioRelativeLayout extends RelativeLayout {
      */
     private void positionChildVertical(View child, LayoutParams params, int myHeight) {
         // 根据条件设置真实的right与left
-        if (params.mBottom != VALUE_NOT_SET && params.mTop != VALUE_NOT_SET) {
-            return;
-        } else if (params.mBottom == VALUE_NOT_SET && params.mTop != VALUE_NOT_SET) {
+        int[] rules = params.getRules();
+        if (params.mBottom == VALUE_NOT_SET && params.mTop != VALUE_NOT_SET) {
             params.mBottom = params.mTop + child.getMeasuredHeight();
         } else if (params.mTop == VALUE_NOT_SET && params.mBottom != VALUE_NOT_SET) {
             params.mTop = params.mBottom - child.getMeasuredHeight();
         } else {
-            int[] rules = params.getRules();
             if (rules[CENTER_VERTICAL] != 0 || rules[CENTER_IN_PARENT] != 0) {
-                params.mTop = Math.round(myHeight / 2f - child.getMeasuredHeight() / 2f);
-                params.mBottom = Math.round(myHeight / 2f + child.getMeasuredHeight() / 2f);
+                myHeight -= params.bottomMargin + params.topMargin;
+                params.mTop = Math.round(myHeight / 2f - child.getMeasuredHeight() / 2f) + params.topMargin;
+                params.mBottom = Math.round(myHeight / 2f + child.getMeasuredHeight() / 2f) + params.topMargin;
             } else {
                 params.mTop = mPaddingTop + params.topMargin;
                 params.mBottom = params.mTop + child.getMeasuredHeight();
             }
         }
 
-        // 计算自身的ratioWidth
-        // if (params.ratioHeight <= 0 && myHeight != 0) {
-        // params.ratioHeight = child.getMeasuredHeight() / myHeight * mHeightPiece;
-        // }
+        int gap = params.mBottom - params.mTop - child.getMeasuredHeight();
+        if (gap > 0 && (rules[CENTER_VERTICAL] != 0 || rules[CENTER_IN_PARENT] != 0)) {
+            params.mTop += gap / 2;
+            params.mBottom -= gap / 2;
+        }
     }
 
     /**
