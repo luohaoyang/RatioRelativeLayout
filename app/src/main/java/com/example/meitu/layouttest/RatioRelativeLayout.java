@@ -572,7 +572,7 @@ public class RatioRelativeLayout extends RelativeLayout {
             params.mRight = params.mLeft + child.getMeasuredWidth();
         } else if (params.mLeft == VALUE_NOT_SET && params.mRight != VALUE_NOT_SET) {
             params.mLeft = params.mRight - child.getMeasuredWidth();
-        } else {
+        } else if (params.mLeft == VALUE_NOT_SET && params.mRight == VALUE_NOT_SET) {
             if (rules[CENTER_HORIZONTAL] != 0 || rules[CENTER_IN_PARENT] != 0) {
                 myWidth -= params.leftMargin + params.rightMargin;
                 params.mLeft = Math.round(myWidth / 2f - child.getMeasuredWidth() / 2f) + params.leftMargin;
@@ -604,7 +604,7 @@ public class RatioRelativeLayout extends RelativeLayout {
             params.mBottom = params.mTop + child.getMeasuredHeight();
         } else if (params.mTop == VALUE_NOT_SET && params.mBottom != VALUE_NOT_SET) {
             params.mTop = params.mBottom - child.getMeasuredHeight();
-        } else {
+        } else if (params.mBottom == VALUE_NOT_SET && params.mTop == VALUE_NOT_SET) {
             if (rules[CENTER_VERTICAL] != 0 || rules[CENTER_IN_PARENT] != 0) {
                 myHeight -= params.bottomMargin + params.topMargin;
                 params.mTop = Math.round(myHeight / 2f - child.getMeasuredHeight() / 2f) + params.topMargin;
