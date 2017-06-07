@@ -202,10 +202,6 @@ public class RatioRelativeLayout extends RelativeLayout {
         if (mAdaptType == FIT_Y && mHeightPiece > 0) {
             mWidthPiece = Math.round(mHeightPiece * width / (float) height);
         }
-
-        if (mWidthPiece <= 0 || mHeightPiece <= 0) {
-            throw new IllegalArgumentException("widthSpec or heightSpec are not defined.");
-        }
     }
 
     /**
@@ -230,6 +226,9 @@ public class RatioRelativeLayout extends RelativeLayout {
      * @param height 当前layout真实的height。
      */
     private void resolveChildSizeAndMargin(int width, int height) {
+        if (mWidthPiece <= 0 || mHeightPiece <= 0) {
+            return;
+        }
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             ViewGroup.LayoutParams params = getChildAt(i).getLayoutParams();
