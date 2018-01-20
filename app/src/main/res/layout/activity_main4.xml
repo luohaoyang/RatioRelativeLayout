@@ -7,25 +7,27 @@
     app:layout_heightSpec="1920"
     app:layout_widthSpec="1080">
 
-    <com.example.meitu.layouttest.RatioRelativeLayout
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="#475"
-        android:clipChildren="false"
-        app:adaptType="fitY"
-        app:layout_heightSpec="200"
-        app:layout_ratioHeight="200">
+        app:layout_ratioMarginLeft="200"
+        app:layout_ratioMarginRight="100"
+        app:layout_ratioHeight="10000"
+        android:background="@color/colorPrimary"
+        app:maxAspectRatio="3"
+        app:minAspectRatio="1" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="#371"
-            app:aspectRatio="2"
-            app:layout_ratioHeight="400" />
-
-    </com.example.meitu.layouttest.RatioRelativeLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_ratioMarginLeft="200"
+        app:layout_ratioMarginRight="100"
+        app:layout_ratioHeight="100"
+        android:background="@color/colorAccent"
+        app:maxAspectRatio="3"
+        app:layoutHorizonFirst="false"
+        app:minAspectRatio="1" />
 
 
 </com.example.meitu.layouttest.RatioRelativeLayout>

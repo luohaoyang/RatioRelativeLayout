@@ -327,6 +327,38 @@ public class RatioRelativeLayout extends RelativeLayout {
             params.bottomMargin, mPaddingTop, mPaddingBottom, myHeight, requestVerticalCenter);
 
         child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+
+        // 最大最小宽高比限制
+        if (params.maxAspectRatio != 0 || params.minAspectRatio != 0) {
+            if (params.layoutHorizonFirst) {
+                // 高依赖宽的情况
+                int childWidth = child.getMeasuredWidth();
+                if (params.maxAspectRatio > 0 && childWidth / params.maxAspectRatio > child.getMeasuredHeight()) {
+                    int minHeight = Math.round(childWidth / params.maxAspectRatio);
+                    childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(minHeight, MeasureSpec.EXACTLY);
+                    child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+                } else if (params.minAspectRatio > 0
+                    && childWidth / params.minAspectRatio < child.getMeasuredHeight()) {
+                    int maxHeight = Math.round(childWidth / params.minAspectRatio);
+                    childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.EXACTLY);
+                    child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+                }
+            } else {
+                // 宽依赖高的情况。
+                int childHeight = child.getMeasuredHeight();
+                if (params.maxAspectRatio > 0 && childHeight * params.maxAspectRatio < child.getMeasuredWidth()) {
+                    int maxWidth = Math.round(childHeight * params.maxAspectRatio);
+                    childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.EXACTLY);
+                    child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+                } else if (params.minAspectRatio > 0
+                    && childHeight * params.minAspectRatio > child.getMeasuredWidth()) {
+                    int minWidth = Math.round(childHeight * params.minAspectRatio);
+                    childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(minWidth, MeasureSpec.EXACTLY);
+                    child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+                }
+            }
+        }
+
     }
 
     /**
@@ -475,7 +507,6 @@ public class RatioRelativeLayout extends RelativeLayout {
         // 处理宽高比
         if (childParams.aspectRatio != 0 && childParams.hasLayoutHorizontal) {
             int height;
-
             if (childParams.mTop != VALUE_NOT_SET && childParams.mBottom != VALUE_NOT_SET) {
                 return;
             } else if (childParams.mTop != VALUE_NOT_SET) {
@@ -492,6 +523,7 @@ public class RatioRelativeLayout extends RelativeLayout {
                 childParams.height = height;
             }
         }
+
     }
 
     /**
@@ -697,13 +729,15 @@ public class RatioRelativeLayout extends RelativeLayout {
         // child的四个边界
         private int mLeft, mTop, mRight, mBottom;
         // 宽高比
-        public float aspectRatio = 0;
+        public float aspectRatio = 0, maxAspectRatio = 0, minAspectRatio = 0;
         // 比例size
         public float ratioWidth = -1, ratioHeight = -1;
         // 比例margin
         public float ratioMarginLeft = 0, ratioMarginRight = 0, ratioMarginTop = 0, ratioMarginBottom = 0;
         // 是否已经布局的竖直方向，水平方向。此标志未用来判断aspectRatio的依赖关系。
         private boolean hasLayoutVertical, hasLayoutHorizontal;
+        // 是否先布局水平方向，只有在maxAspectRatio或minAspectRatio设置了的情况下才会生效。
+        private boolean layoutHorizonFirst;
 
         public LayoutParams(ViewGroup.LayoutParams layoutParams) {
             super(layoutParams);
@@ -725,6 +759,14 @@ public class RatioRelativeLayout extends RelativeLayout {
 
             String ratioString = a.getString(R.styleable.RatioRelativeLayout_Layout_aspectRatio);
             aspectRatio = TextUtils.isEmpty(ratioString) ? 0 : getAspectRatioByString(ratioString);
+            String maxRatioString = a.getString(R.styleable.RatioRelativeLayout_Layout_maxAspectRatio);
+            maxAspectRatio = TextUtils.isEmpty(maxRatioString) ? 0 : getAspectRatioByString(maxRatioString);
+            String minRatioString = a.getString(R.styleable.RatioRelativeLayout_Layout_minAspectRatio);
+            minAspectRatio = TextUtils.isEmpty(minRatioString) ? 0 : getAspectRatioByString(minRatioString);
+            if (maxAspectRatio < minAspectRatio) {
+                throw new IllegalStateException("maxAspectRatio must larger than minAspectRatio");
+            }
+            layoutHorizonFirst = a.getBoolean(R.styleable.RatioRelativeLayout_Layout_layoutHorizonFirst, true);
             a.recycle();
         }
 
@@ -953,6 +995,21 @@ public class RatioRelativeLayout extends RelativeLayout {
                         } else if (params.hasCertainWidth() && node.orientation == VERTICAL) {
                             dependency = keyNodes.get(node.view.getId() + "" + HORIZONTAL);
                         }
+                    }
+                    // Skip unknowns and self dependencies
+                    if (dependency != null && dependency != node) {
+                        // Add the current node as a dependent
+                        dependency.dependents.put(node, this);
+                        // Add a dependency to the current node
+                        node.dependencies.put(dependency.key, dependency);
+                    }
+                } else if (layoutParams.maxAspectRatio != 0 && layoutParams.minAspectRatio != 0) {
+                    LayoutParams params = (LayoutParams) node.view.getLayoutParams();
+                    DependencyGraph.Node dependency = null;
+                    if (params.layoutHorizonFirst && node.orientation == VERTICAL) {
+                        dependency = keyNodes.get(node.view.getId() + "" + HORIZONTAL);
+                    } else if (!params.layoutHorizonFirst && node.orientation == HORIZONTAL) {
+                        dependency = keyNodes.get(node.view.getId() + "" + VERTICAL);
                     }
                     // Skip unknowns and self dependencies
                     if (dependency != null && dependency != node) {

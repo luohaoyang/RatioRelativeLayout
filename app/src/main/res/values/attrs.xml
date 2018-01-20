@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="RatioRelativeLayout">
-        <attr name="layout_widthSpec" format="float"/>
-        <attr name="layout_heightSpec" format="float"/>
-        <attr name="android:clipChildren"/>
+        <attr name="layout_widthSpec" format="float" />
+        <attr name="layout_heightSpec" format="float" />
+        <attr name="android:clipChildren" />
         <attr name="adaptType">
-            <enum name="fitXY" value="0"/>
-            <enum name="fitX" value="1"/>
-            <enum name="fitY" value="2"/>
+            <enum name="fitXY" value="0" />
+            <enum name="fitX" value="1" />
+            <enum name="fitY" value="2" />
         </attr>
     </declare-styleable>
 
     <declare-styleable name="RatioRelativeLayout_Layout">
-        <attr name="aspectRatio" format="string"/>
-        <attr name="layout_ratioWidth" format="float"/>
-        <attr name="layout_ratioHeight" format="float"/>
-        <attr name="layout_ratioMarginLeft" format="float"/>
-        <attr name="layout_ratioMarginRight" format="float"/>
-        <attr name="layout_ratioMarginTop" format="float"/>
-        <attr name="layout_ratioMarginBottom" format="float"/>
+        <attr name="aspectRatio" format="string" />
+        <attr name="layout_ratioWidth" format="float" />
+        <attr name="layout_ratioHeight" format="float" />
+        <attr name="layout_ratioMarginLeft" format="float" />
+        <attr name="layout_ratioMarginRight" format="float" />
+        <attr name="layout_ratioMarginTop" format="float" />
+        <attr name="layout_ratioMarginBottom" format="float" />
+        <attr name="maxAspectRatio" format="string" />
+        <attr name="minAspectRatio" format="string" />
+        <attr name="layoutHorizonFirst" format="boolean" />
     </declare-styleable>
 
 
