@@ -1,0 +1,31 @@
+<com.example.meitu.layouttest.RatioRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#987"
+    android:clipChildren="false"
+    app:layout_heightSpec="1920"
+    app:layout_widthSpec="1080">
+
+    <com.example.meitu.layouttest.RatioRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:background="#475"
+        android:clipChildren="false"
+        app:adaptType="fitY"
+        app:layout_heightSpec="200"
+        app:layout_ratioHeight="200">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="#371"
+            app:aspectRatio="2"
+            app:layout_ratioHeight="400" />
+
+    </com.example.meitu.layouttest.RatioRelativeLayout>
+
+
+</com.example.meitu.layouttest.RatioRelativeLayout>
